@@ -1,4 +1,4 @@
-# Building KVS: 
+# Building GBBflaggr: 
 ### Dependencies
 You only need gcc, make, and musl-tools! All static libs are inside `lib/`
 
@@ -9,7 +9,7 @@ Alpine-based systems: apk add gcc make
 ```
 
 ### Compiling: 
-To compile KVS, you only need to run a few commands
+To compile GBBflagr, you only need to run a few commands
 
 ```
 # First, clone the repo (insiders, use KVS-private)
@@ -30,10 +30,7 @@ cd shim-builder/
 sudo bash builder.sh
 ```
 
-Notes: KVS **requires** KVG or else the shim will not build successfully
-
-
-# Building KVG: 
+# Building it: 
 ### Dependencies
 Same as KVS, you only need `gcc`, `make`, and `musl`
 
