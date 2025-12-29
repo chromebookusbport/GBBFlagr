@@ -63,7 +63,6 @@ descriptions=(
     "Always sync CSE, even if it is same as CBFS CSE"
 )
 
-# --- Step 1: Pre-flight & Extraction ---
 if [[ $EUID -ne 0 ]]; then
    echo -e "${RED}ERROR: Please run with sudo.${NC}"
    exit 1
@@ -71,12 +70,10 @@ fi
 
 FUTILITY_BIN=$(which futility 2>/dev/null || echo "/usr/bin/futility")
 
-# Get current flags
 raw_output=$($FUTILITY_BIN gbb --get --flags 2>/dev/null)
 current_hex=$(echo "$raw_output" | grep -i "flags:" | sed -n 's/.*flags: \(0x[0-9a-fA-F]*\).*/\1/p')
 [[ -z "$current_hex" ]] && current_hex="0x00008071" # Fallback to common value
 
-# WP Detection
 HW_WP="OFF"
 [[ "$(crossystem wpsw_cur 2>/dev/null)" == "1" ]] && HW_WP="ENABLED"
 
@@ -84,7 +81,6 @@ sw_wp_raw=$(flashrom -p internal --wp-status 2>/dev/null)
 SW_WP="OFF"
 echo "$sw_wp_raw" | grep -q "write protect is enabled" && SW_WP="ENABLED"
 
-# --- Step 2: Bit Processing ---
 hex_clean="${current_hex#0x}"
 current_int=$((16#$hex_clean))
 selected=()
@@ -96,7 +92,6 @@ done
 trap "tput cnorm; clear; exit" SIGINT SIGTERM
 tput civis; clear 
 
-# --- Step 3: Selector Loop ---
 cursor=0
 while true; do
     printf "\033[H"
@@ -148,7 +143,6 @@ done
 
 tput cnorm; clear
 
-# --- Step 4: Execution ---
 final_val=0
 for ((i=0; i<num_options; i++)); do
     [[ "${selected[$i]}" -eq 1 ]] && : $(( final_val |= (1 << i) ))
@@ -162,7 +156,7 @@ echo -e "To:   ${GREEN}$final_hex${NC}\n"
 
 if [[ "$HW_WP" == "ENABLED" ]]; then
     echo -e "${RED}ERROR: Hardware Write Protection (HW-WP) is ENABLED.${NC}"
-    echo -e "Physical lock is active. On your ${BOLD}Dell 3100 (Fleex)${NC}:"
+    echo -e "Physical lock is active.${NC}:"
     echo -e "1. Unplug charger, open bottom cover."
     echo -e "2. Unplug the battery cable from the motherboard."
     echo -e "3. Plug charger back in and boot (with battery unplugged)."
