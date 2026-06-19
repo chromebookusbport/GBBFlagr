@@ -12,6 +12,6 @@ if [ "$wspw_cur" = "0" ]; then
     reboot
 elif [ "$wspw_cur" = "1" ]; then
     echo "disable hwwp bro"
-    sleep 5
+    read -n 1 -s -r -p "Press any key to continue..."
     reboot
 fi
